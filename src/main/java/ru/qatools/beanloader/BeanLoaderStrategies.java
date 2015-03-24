@@ -9,7 +9,10 @@ import java.net.URL;
 /**
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
  */
-public abstract class BeanLoaderStrategies {
+public class BeanLoaderStrategies {
+
+    private BeanLoaderStrategies() {
+    }
 
     public static FileLoadStrategy file(String filename) {
         return file(filename, false);

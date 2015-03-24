@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.nio.file.*;
 
 /**
@@ -14,14 +15,14 @@ public class FileWatcher implements Runnable {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final BeanLoadStrategy loadStrategy;
+    private final WeakReference<BeanLoadStrategy> loadStrategyReference;
     private final Class beanClass;
     private final String directory;
     private final String file;
 
     public FileWatcher(BeanLoadStrategy loadStrategy, Class beanClass,
                        String directory, String file) {
-        this.loadStrategy = loadStrategy;
+        this.loadStrategyReference = new WeakReference<>(loadStrategy);
         this.beanClass = beanClass;
         this.directory = directory;
         this.file = file;
@@ -29,12 +30,12 @@ public class FileWatcher implements Runnable {
 
     @Override
     public void run() {
-        Path directory = Paths.get(this.directory);
+        Path path = Paths.get(directory);
         try (WatchService service = FileSystems.getDefault().newWatchService()) {
-            directory.register(service, StandardWatchEventKinds.ENTRY_MODIFY);
+            path.register(service, StandardWatchEventKinds.ENTRY_MODIFY);
             watch(service);
         } catch (IOException e) {
-            logger.error("Can't create watch service for directory " + this.directory, e);
+            logger.error("Can't create watch service for directory " + directory, e);
         } catch (InterruptedException e) {
             logger.warn("oops, thread was interrupted");
         }
@@ -61,6 +62,9 @@ public class FileWatcher implements Runnable {
     }
 
     protected void invokeFileReload() {
-        loadStrategy.loadBean(beanClass);
+        BeanLoadStrategy strategy = loadStrategyReference.get();
+        if (strategy != null) {
+            strategy.loadBean(beanClass);
+        }
     }
 }

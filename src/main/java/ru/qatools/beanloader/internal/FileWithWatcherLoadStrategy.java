@@ -39,9 +39,9 @@ public class FileWithWatcherLoadStrategy extends FileLoadStrategy {
 
     @Override
     protected void finalize() throws Throwable {
-        super.finalize();
         if (executor != null) {
             executor.shutdownNow();
         }
+        super.finalize();
     }
 }
