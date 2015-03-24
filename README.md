@@ -13,7 +13,7 @@ than to the others.
 <dependency>
     <groupId>ru.yandex.qatools.beanloader</groupId>
     <artifactId>beanloader</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 </dependency>
 ```
 
