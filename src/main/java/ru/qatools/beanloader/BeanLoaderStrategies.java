@@ -18,6 +18,10 @@ public class BeanLoaderStrategies {
         return file(filename, false);
     }
 
+    public static FileLoadStrategy file(File file) {
+        return file(file, false);
+    }
+
     public static FileLoadStrategy file(String filename, boolean reloadEveryTime) {
         return file(new File(filename), reloadEveryTime);
     }
