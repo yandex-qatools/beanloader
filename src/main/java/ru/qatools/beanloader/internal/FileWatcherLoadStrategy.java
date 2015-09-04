@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 /**
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
  */
-public class FileWithWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
+public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
 
     private final String directory;
     private final String file;
@@ -17,7 +17,7 @@ public class FileWithWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
 
     private ExecutorService executor;
 
-    public FileWithWatcherLoadStrategy(String directory, String file) {
+    public FileWatcherLoadStrategy(String directory, String file) {
         this(directory, file, new BeanChangeListener<T>() {
             @Override
             public void beanChanged(T newBean) {
@@ -25,7 +25,7 @@ public class FileWithWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
         });
     }
 
-    public FileWithWatcherLoadStrategy(String directory, String file, BeanChangeListener<T> listener) {
+    public FileWatcherLoadStrategy(String directory, String file, BeanChangeListener<T> listener) {
         super(new File(directory, file), false);
         this.directory = directory;
         this.file = file;

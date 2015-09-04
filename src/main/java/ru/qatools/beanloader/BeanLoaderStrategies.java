@@ -3,7 +3,7 @@ package ru.qatools.beanloader;
 import ru.qatools.beanloader.internal.BeanChangeListener;
 import ru.qatools.beanloader.internal.BeanLoadStrategy;
 import ru.qatools.beanloader.internal.FileLoadStrategy;
-import ru.qatools.beanloader.internal.FileWithWatcherLoadStrategy;
+import ru.qatools.beanloader.internal.FileWatcherLoadStrategy;
 import ru.qatools.beanloader.internal.ResourceLoadStrategy;
 import ru.qatools.beanloader.internal.UrlLoadStrategy;
 
@@ -35,12 +35,12 @@ public class BeanLoaderStrategies {
         return new FileLoadStrategy(file, reloadEveryTime);
     }
 
-    public static FileWithWatcherLoadStrategy fileWithWatcher(String directoryToWatch, String fileToWatch) {
-        return new FileWithWatcherLoadStrategy(directoryToWatch, fileToWatch);
+    public static FileWatcherLoadStrategy fileWithWatcher(String directoryToWatch, String fileToWatch) {
+        return new FileWatcherLoadStrategy(directoryToWatch, fileToWatch);
     }
 
-    public static <T> FileWithWatcherLoadStrategy<T> fileWithWatcher(String directoryToWatch, String fileToWatch, BeanChangeListener<T> listener) {
-        return new FileWithWatcherLoadStrategy<>(directoryToWatch, fileToWatch, listener);
+    public static <T> FileWatcherLoadStrategy<T> fileWithWatcher(String directoryToWatch, String fileToWatch, BeanChangeListener<T> listener) {
+        return new FileWatcherLoadStrategy<>(directoryToWatch, fileToWatch, listener);
     }
 
     public static UrlLoadStrategy url(URL url) {

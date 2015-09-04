@@ -4,14 +4,26 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import ru.qatools.beanloader.internal.*;
+import ru.qatools.beanloader.internal.BeanLoadStrategy;
+import ru.qatools.beanloader.internal.FileLoadStrategy;
+import ru.qatools.beanloader.internal.FileWatcherLoadStrategy;
+import ru.qatools.beanloader.internal.ResourceLoadStrategy;
+import ru.qatools.beanloader.internal.UrlLoadStrategy;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static ru.qatools.beanloader.BeanAssert.*;
-import static ru.qatools.beanloader.BeanLoaderStrategies.*;
+import static ru.qatools.beanloader.BeanAssert.BEAN_XML_NAME;
+import static ru.qatools.beanloader.BeanAssert.BEAN_XML_PATH;
+import static ru.qatools.beanloader.BeanAssert.BEAN_XML_URL;
+import static ru.qatools.beanloader.BeanAssert.RESOURCES_DIR;
+import static ru.qatools.beanloader.BeanAssert.getActualValue;
+import static ru.qatools.beanloader.BeanAssert.setActualValue;
+import static ru.qatools.beanloader.BeanLoaderStrategies.file;
+import static ru.qatools.beanloader.BeanLoaderStrategies.fileWithWatcher;
+import static ru.qatools.beanloader.BeanLoaderStrategies.resource;
+import static ru.qatools.beanloader.BeanLoaderStrategies.url;
 
 /**
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
@@ -40,7 +52,7 @@ public class ReloadStrategiesTest extends BeanChangingTest {
                 {
                         fileWithWatcher(RESOURCES_DIR, BEAN_XML_NAME),
                         false,
-                        FileWithWatcherLoadStrategy.class.getSimpleName()
+                        FileWatcherLoadStrategy.class.getSimpleName()
                 },
                 {
                         url(BEAN_XML_URL),
