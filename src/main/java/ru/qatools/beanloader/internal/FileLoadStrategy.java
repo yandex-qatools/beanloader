@@ -6,7 +6,7 @@ import java.io.File;
 /**
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
  */
-public class FileLoadStrategy extends BeanLoadStrategy {
+public class FileLoadStrategy<T> extends BeanLoadStrategy<T> {
 
     private final File file;
     private final boolean reload;
@@ -27,8 +27,9 @@ public class FileLoadStrategy extends BeanLoadStrategy {
     }
 
     @Override
-    protected Object performUnmarshal(Class beanClass) {
-        return JAXB.unmarshal(file, beanClass);
+    @SuppressWarnings("unchecked")
+    protected T performUnmarshal(Class beanClass) {
+        return (T) JAXB.unmarshal(file, beanClass);
     }
 
     @Override

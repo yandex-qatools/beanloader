@@ -6,7 +6,7 @@ import java.net.URL;
 /**
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
  */
-public class UrlLoadStrategy extends BeanLoadStrategy {
+public class UrlLoadStrategy<T> extends BeanLoadStrategy<T> {
 
     protected final URL url;
     private final boolean reload;
@@ -26,8 +26,9 @@ public class UrlLoadStrategy extends BeanLoadStrategy {
     }
 
     @Override
-    protected Object performUnmarshal(Class beanClass) {
-        return JAXB.unmarshal(url, beanClass);
+    @SuppressWarnings("unchecked")
+    protected T performUnmarshal(Class beanClass) {
+        return (T) JAXB.unmarshal(url, beanClass);
     }
 
     @Override

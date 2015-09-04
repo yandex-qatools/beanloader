@@ -6,25 +6,23 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.DataBindingException;
 
 /**
- * This class could be generified but it is not. The purpose of that is
- * to increase the 'fluency' of the {@link ru.qatools.beanloader.BeanLoader} API. Note that
- * with the proper usage through BeanLoader this code can not lead to any
- * ClassCastExceptions, although it is not fully generified and has class casts
- * in the code. This is fine because the BeanLoader itself is generified properly.
- *
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
  */
-public abstract class BeanLoadStrategy {
+public abstract class BeanLoadStrategy<T> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private Object bean;
+    private T bean;
     private boolean loaded;
 
-    public Object getBeanAs(Class beanClass) {
+    public T getBeanAs(Class beanClass) {
         if (!loaded || reloadEveryTime()) {
             loadBean(beanClass);
         }
+        return bean;
+    }
+
+    protected T getBean() {
         return bean;
     }
 
@@ -56,6 +54,6 @@ public abstract class BeanLoadStrategy {
 
     protected abstract boolean canUnmarshal();
     protected abstract boolean reloadEveryTime();
-    protected abstract Object performUnmarshal(Class beanClass);
+    protected abstract T performUnmarshal(Class beanClass);
     protected abstract String getSourceDescription();
 }
