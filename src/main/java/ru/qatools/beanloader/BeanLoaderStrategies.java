@@ -1,6 +1,11 @@
 package ru.qatools.beanloader;
 
-import ru.qatools.beanloader.internal.*;
+import ru.qatools.beanloader.internal.BeanChangeListener;
+import ru.qatools.beanloader.internal.BeanLoadStrategy;
+import ru.qatools.beanloader.internal.FileLoadStrategy;
+import ru.qatools.beanloader.internal.FileWithWatcherLoadStrategy;
+import ru.qatools.beanloader.internal.ResourceLoadStrategy;
+import ru.qatools.beanloader.internal.UrlLoadStrategy;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -32,6 +37,10 @@ public class BeanLoaderStrategies {
 
     public static FileWithWatcherLoadStrategy fileWithWatcher(String directoryToWatch, String fileToWatch) {
         return new FileWithWatcherLoadStrategy(directoryToWatch, fileToWatch);
+    }
+
+    public static <T> FileWithWatcherLoadStrategy<T> fileWithWatcher(String directoryToWatch, String fileToWatch, BeanChangeListener<T> listener) {
+        return new FileWithWatcherLoadStrategy<>(directoryToWatch, fileToWatch, listener);
     }
 
     public static UrlLoadStrategy url(URL url) {
