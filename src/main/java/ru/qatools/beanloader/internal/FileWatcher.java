@@ -5,7 +5,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.nio.file.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 /**
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
@@ -20,8 +27,7 @@ public class FileWatcher implements Runnable {
     private final String directory;
     private final String file;
 
-    public FileWatcher(BeanLoadStrategy loadStrategy, Class beanClass,
-                       String directory, String file) {
+    public FileWatcher(BeanLoadStrategy loadStrategy, Class beanClass, String directory, String file) {
         this.loadStrategyReference = new WeakReference<>(loadStrategy);
         this.beanClass = beanClass;
         this.directory = directory;
@@ -32,7 +38,7 @@ public class FileWatcher implements Runnable {
     public void run() {
         Path path = Paths.get(directory);
         try (WatchService service = FileSystems.getDefault().newWatchService()) {
-            path.register(service, StandardWatchEventKinds.ENTRY_MODIFY);
+            path.register(service, ENTRY_MODIFY);
             watch(service);
         } catch (IOException e) {
             logger.error("Can't create watch service for directory " + directory, e);
