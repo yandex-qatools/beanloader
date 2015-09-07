@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,16 +17,14 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
  * @author Dmitry Baev charlie@yandex-team.ru
  */
-public class FileWatcher implements Runnable {
+public abstract class FileWatcher implements Runnable {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final WeakReference<BeanLoadStrategy> loadStrategyReference;
     private final String directory;
     private final String file;
 
-    public FileWatcher(BeanLoadStrategy loadStrategy, String directory, String file) {
-        this.loadStrategyReference = new WeakReference<>(loadStrategy);
+    public FileWatcher(String directory, String file) {
         this.directory = directory;
         this.file = file;
     }
@@ -65,10 +62,5 @@ public class FileWatcher implements Runnable {
         }
     }
 
-    protected void invokeFileReload() {
-        BeanLoadStrategy strategy = loadStrategyReference.get();
-        if (strategy != null) {
-            strategy.loadBean();
-        }
-    }
+    protected abstract void invokeFileReload();
 }

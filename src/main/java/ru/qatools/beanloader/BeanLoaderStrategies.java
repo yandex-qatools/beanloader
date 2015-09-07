@@ -42,6 +42,10 @@ public class BeanLoaderStrategies {
         return new FileWatcherLoadStrategy<>(directoryToWatch, fileToWatch, listener);
     }
 
+    public static <T> FileWatcherLoadStrategy<T> fileWithWatcher(String directoryToWatch, String fileToWatch, BeanChangeListener<T> listener, boolean preventGC) {
+        return new FileWatcherLoadStrategy<>(directoryToWatch, fileToWatch, listener, preventGC);
+    }
+
     public static UrlLoadStrategy url(URL url) {
         return url(url, false);
     }

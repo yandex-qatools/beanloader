@@ -14,6 +14,7 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
     private final String directory;
     private final String file;
     private final BeanChangeListener<T> listener;
+    private final boolean preventGC;
 
     private ExecutorService executor;
 
@@ -26,10 +27,15 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
     }
 
     public FileWatcherLoadStrategy(String directory, String file, BeanChangeListener<T> listener) {
+        this(directory, file, listener, false);
+    }
+
+    public FileWatcherLoadStrategy(String directory, String file, BeanChangeListener<T> listener, boolean preventGC) {
         super(new File(directory, file), false);
         this.directory = directory;
         this.file = file;
         this.listener = listener;
+        this.preventGC = preventGC;
     }
 
     @Override
@@ -41,7 +47,8 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
 
     private void startFileWatcherThread() {
         executor = Executors.newSingleThreadExecutor();
-        executor.execute(new FileWatcher(this, directory, file));
+        executor.execute(preventGC ? new ImmortalFileWatcher(this, directory, file)
+                                   : new WeakFileWatcher    (this, directory, file));
         executor.shutdown();
     }
 
@@ -54,7 +61,8 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        if (executor != null) {
+        if (!preventGC && executor != null) {
+            logger.debug("Strategy object is garbage-collected, stopping watcher thread");
             executor.shutdownNow();
         }
     }
