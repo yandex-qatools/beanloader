@@ -101,11 +101,15 @@ public class MyClass {
 }
 ```
 
-The second boolean parameter here indicates that a file will be reloaded on every call to ```beanLoader.getBean()``` method.
+The second boolean parameter here indicates that a file will be reloaded 
+on every call to ```beanLoader.getBean()``` method.
 
 #### 3) Using a file watcher
 
-Now suppose realoading a file every time doesn't suit your needs and you want to use a ```java.nio.file.WatchService``` to change the loaded bean only when it gets changed externally. Instead of implementing your own thread and ```while(true)``` loop you can just do it in a couple of lines:
+Now suppose realoading a file every time doesn't suit your needs 
+and you want to use a ```java.nio.file.WatchService``` to change the loaded bean 
+only when it gets changed externally. Instead of implementing your own thread 
+with ```while(true)``` loop you can just do it in a couple of lines:
 
 ```java
 public class MyClass {
@@ -123,18 +127,28 @@ public class MyClass {
 }
 ```
 
-And that's it! The eban will be reloaded only when it is changed and you'll get the fresh version of your bean on every call to ```beanLoader.getBean()``` guaranteed. Although remember that not every platform supports watching files.
+And that's it! The bean will be reloaded only when it is changed and you'll get 
+the fresh version of your bean on every call to ```beanLoader.getBean()``` guaranteed.
+ Although remember that not every platform supports watching files.
 
 #### 4) Using a file watcher with a listener
 
-Sometimes you need do something with the bean immediately when it changes. For example, log it's contents or fire some message. This can be achieved with the help of ```BeanChangeListener``` interface. See the following code:
+Sometimes you need do something with the bean immediately when it changes. 
+For example, log it's contents or fire some message. This can be achieved 
+with the help of ```BeanChangeListener``` interface. See the following code:
 
 ```java
 public class MyClass implements BeanChangeListener<Bean> {
 
+    private final BeanLoader<Bean> beanLoader;
+
     public MyClass(String filename, String directory) {
-        load(Bean.class).from(fileWithWatcher(directory, filename, this))
-                        .getBean();
+        this.beanLoader = load(Bean.class).from(fileWithWatcher(directory, filename, this));
+    }
+
+    public void doSomeStuff() {
+        Bean bean = beanLoader.getBean();
+        // do some stuff with the bean
     }
 
     @Override
@@ -144,4 +158,6 @@ public class MyClass implements BeanChangeListener<Bean> {
 }
 ```
 
-Notice, you may not even need to declare the beanLoader instance, if all you want is to be notified of changes. Notice how ```getBean()``` is called right after ```beanLoader``` creation to fire the initial bean change.
+Notice that if you lose a link to the beanLoader instance — the watcher thread may get stopped
+somewhere in the future when the garbage collection happens. That's a subject of discussion though
+maybe one can think of some better behaviour for when to stop the thread.
