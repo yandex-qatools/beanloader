@@ -13,20 +13,26 @@ public abstract class BeanLoadStrategy<T> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private T bean;
+    private Class<T> beanClass;
+
     private boolean loaded;
 
-    public T getBeanAs(Class beanClass) {
+    public void init(Class<T> beanClass) {
+        this.beanClass = beanClass;
+    }
+
+    public final T getBean() {
         if (!loaded || reloadEveryTime()) {
-            loadBean(beanClass);
+            loadBean();
         }
         return bean;
     }
 
-    protected T getBean() {
-        return bean;
-    }
+    protected void loadBean() {
+        if (beanClass == null) {
+            throw new UnsupportedOperationException("Unable to load bean: call init(beanClass) first!");
+        }
 
-    protected void loadBean(Class beanClass) {
         loaded = true;
         logger.trace("trying to load bean from " + getSourceDescription());
         if (!canUnmarshal()) {

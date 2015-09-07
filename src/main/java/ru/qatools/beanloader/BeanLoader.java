@@ -22,7 +22,9 @@ public class BeanLoader<T> {
         return new BeanLoader<>(beanClass);
     }
 
+    @SuppressWarnings("unchecked")
     public BeanLoader<T> from(BeanLoadStrategy strategy) {
+        strategy.init(beanClass);
         strategies.add(strategy);
         return this;
     }
@@ -30,7 +32,7 @@ public class BeanLoader<T> {
     public T getBean() {
         for (BeanLoadStrategy strategy : strategies) {
             @SuppressWarnings("unchecked")
-            T bean = (T) strategy.getBeanAs(beanClass);
+            T bean = (T) strategy.getBean();
             if (bean != null) {
                 return bean;
             }

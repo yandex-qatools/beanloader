@@ -23,13 +23,11 @@ public class FileWatcher implements Runnable {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final WeakReference<BeanLoadStrategy> loadStrategyReference;
-    private final Class beanClass;
     private final String directory;
     private final String file;
 
-    public FileWatcher(BeanLoadStrategy loadStrategy, Class beanClass, String directory, String file) {
+    public FileWatcher(BeanLoadStrategy loadStrategy, String directory, String file) {
         this.loadStrategyReference = new WeakReference<>(loadStrategy);
-        this.beanClass = beanClass;
         this.directory = directory;
         this.file = file;
     }
@@ -70,7 +68,7 @@ public class FileWatcher implements Runnable {
     protected void invokeFileReload() {
         BeanLoadStrategy strategy = loadStrategyReference.get();
         if (strategy != null) {
-            strategy.loadBean(beanClass);
+            strategy.loadBean();
         }
     }
 }

@@ -17,8 +17,6 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
 
     private ExecutorService executor;
 
-    private boolean fileWatcherInitialized;
-
     public FileWatcherLoadStrategy(String directory, String file) {
         this(directory, file, new BeanChangeListener<T>() {
             @Override
@@ -35,19 +33,21 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
     }
 
     @Override
-    protected synchronized void loadBean(Class beanClass) {
-        super.loadBean(beanClass);
-        listener.beanChanged(getBean());
-        if (!fileWatcherInitialized) {
-            initFileWatcher(beanClass);
-            fileWatcherInitialized = true;
-        }
+    public void init(Class<T> beanClass) {
+        super.init(beanClass);
+        startFileWatcherThread();
     }
 
-    private void initFileWatcher(Class beanClass) {
+    private void startFileWatcherThread() {
         executor = Executors.newSingleThreadExecutor();
-        executor.execute(new FileWatcher(this, beanClass, directory, file));
+        executor.execute(new FileWatcher(this, directory, file));
         executor.shutdown();
+    }
+
+    @Override
+    protected synchronized void loadBean() {
+        super.loadBean();
+        listener.beanChanged(getBean());
     }
 
     @Override

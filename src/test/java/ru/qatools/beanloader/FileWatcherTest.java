@@ -11,7 +11,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static ru.qatools.beanloader.BeanAssert.*;
+import static ru.qatools.beanloader.BeanAssert.BEAN_XML_NAME;
+import static ru.qatools.beanloader.BeanAssert.RESOURCES_DIR;
+import static ru.qatools.beanloader.BeanAssert.getActualValue;
+import static ru.qatools.beanloader.BeanAssert.setActualValue;
 import static ru.yandex.qatools.matchers.decorators.MatcherDecorators.should;
 import static ru.yandex.qatools.matchers.decorators.MatcherDecorators.timeoutHasExpired;
 
@@ -23,7 +26,7 @@ public class FileWatcherTest extends BeanChangingTest {
     @Test
     public void testFileWatcher() throws Exception {
         final AtomicBoolean unmarshalInvoked = new AtomicBoolean(false);
-        FileWatcher watcher = new FileWatcher(null, null, RESOURCES_DIR, BEAN_XML_NAME) {
+        FileWatcher watcher = new FileWatcher(null, RESOURCES_DIR, BEAN_XML_NAME) {
             @Override
             protected void invokeFileReload() {
                 unmarshalInvoked.getAndSet(true);
