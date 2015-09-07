@@ -1,6 +1,5 @@
 package ru.qatools.beanloader;
 
-import ru.qatools.beanloader.internal.BeanChangeListener;
 import ru.qatools.beanloader.internal.BeanLoadStrategy;
 import ru.qatools.beanloader.internal.FileLoadStrategy;
 import ru.qatools.beanloader.internal.FileWatcherLoadStrategy;

@@ -1,7 +1,6 @@
 package ru.qatools.beanloader;
 
 import org.junit.Test;
-import ru.qatools.beanloader.internal.BeanChangeListener;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;

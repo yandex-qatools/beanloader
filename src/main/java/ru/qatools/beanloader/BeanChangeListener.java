@@ -1,4 +1,4 @@
-package ru.qatools.beanloader.internal;
+package ru.qatools.beanloader;
 
 /**
  * @author Innokenty Shuvalov innokenty@yandex-team.ru

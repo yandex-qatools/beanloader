@@ -1,5 +1,7 @@
 package ru.qatools.beanloader.internal;
 
+import ru.qatools.beanloader.BeanChangeListener;
+
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
