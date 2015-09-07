@@ -144,4 +144,4 @@ public class MyClass implements BeanChangeListener<Bean> {
 }
 ```
 
-Notice, you may not even need to declasre the beanLoader instance, if all you want is to be notified of changes. Notice how ```getBean()``` is called right after ```beanLoader``` creation to fire the initial bean change.
+Notice, you may not even need to declare the beanLoader instance, if all you want is to be notified of changes. Notice how ```getBean()``` is called right after ```beanLoader``` creation to fire the initial bean change.
