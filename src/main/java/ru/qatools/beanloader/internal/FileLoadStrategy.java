@@ -34,6 +34,6 @@ public class FileLoadStrategy<T> extends BeanLoadStrategy<T> {
 
     @Override
     protected String getSourceDescription() {
-        return "file '" + file.getPath() + "'";
+        return "file " + file.getPath();
     }
 }
