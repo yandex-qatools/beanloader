@@ -18,7 +18,7 @@ public class BeanLoader<T> {
         this.beanClass = beanClass;
     }
 
-    public static <T> BeanLoader<T> load(Class<T> beanClass) {
+    public static <U> BeanLoader<U> load(Class<U> beanClass) {
         return new BeanLoader<>(beanClass);
     }
 
