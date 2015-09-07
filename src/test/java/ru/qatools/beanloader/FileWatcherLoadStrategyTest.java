@@ -18,12 +18,12 @@ public class FileWatcherLoadStrategyTest extends BeanChangingTest {
     @Test
     public void testFileWatcher() throws Exception {
         TestBeanChangeListener listener = new TestBeanChangeListener();
-
         BeanAssert assertBean = new BeanAssert(fileWithWatcher(RESOURCES_DIR, BEAN_XML_NAME, listener));
-        assertBean.valueIsEqualToActual();
 
         assertTrue(listener.isOnChangeMethodCalled());
         listener.reset();
+
+        assertBean.valueIsEqualToActual();
 
         Thread.sleep(1000);
         String newValue = "another " + getActualValue();

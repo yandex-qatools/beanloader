@@ -35,6 +35,7 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
     @Override
     public void init(Class<T> beanClass) {
         super.init(beanClass);
+        loadBean();
         startFileWatcherThread();
     }
 
