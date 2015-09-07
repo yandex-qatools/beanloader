@@ -13,9 +13,9 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
     private final String file;
     private final BeanChangeListener<T> listener;
 
-    private boolean fileWatcherInitialized;
-
     private ExecutorService executor;
+
+    private boolean fileWatcherInitialized;
 
     public FileWatcherLoadStrategy(String directory, String file) {
         this(directory, file, new BeanChangeListener<T>() {
@@ -50,9 +50,9 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
 
     @Override
     protected void finalize() throws Throwable {
+        super.finalize();
         if (executor != null) {
             executor.shutdownNow();
         }
-        super.finalize();
     }
 }
