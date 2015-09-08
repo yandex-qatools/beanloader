@@ -13,7 +13,7 @@ public class ImmortalFileWatcher extends FileWatcher {
     }
 
     @Override
-    protected void invokeFileReload() {
+    protected void fileChanged() {
         loadStrategy.loadBean();
     }
 }

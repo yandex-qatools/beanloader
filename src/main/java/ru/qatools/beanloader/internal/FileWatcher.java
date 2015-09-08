@@ -55,12 +55,12 @@ public abstract class FileWatcher implements Runnable {
     private void handleKey(WatchKey key) {
         for (WatchEvent event : key.pollEvents()) {
             Path path = (Path) event.context();
-            if (path.toAbsolutePath().endsWith(file)) {
-                logger.info("file '" + file + "' changed");
-                invokeFileReload();
+            if (path.toString().equals(file)) {
+                logger.info("file " + file + " changed");
+                fileChanged();
             }
         }
     }
 
-    protected abstract void invokeFileReload();
+    protected abstract void fileChanged();
 }

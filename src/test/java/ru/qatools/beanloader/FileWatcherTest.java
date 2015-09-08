@@ -27,7 +27,7 @@ public class FileWatcherTest extends BeanChangingTest {
     public void testFileWatcher() throws Exception {
         final AtomicBoolean unmarshalInvoked = new AtomicBoolean(false);
         FileWatcher watcher = new FileWatcher(RESOURCES_DIR, BEAN_XML_NAME) {
-            protected void invokeFileReload() {
+            protected void fileChanged() {
                 unmarshalInvoked.getAndSet(true);
             }
         };
