@@ -1,22 +1,22 @@
 package ru.qatools.beanloader;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import ru.qatools.beanloader.internal.FileChangeListener;
 import ru.qatools.beanloader.internal.FileWatcher;
 
-import java.nio.file.Path;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.concurrent.ExecutorService;
 
-import static org.junit.Assert.assertFalse;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
 import static ru.qatools.beanloader.BeanAssert.BEAN_XML_NAME;
 import static ru.qatools.beanloader.BeanAssert.RESOURCES_DIR;
 import static ru.qatools.beanloader.BeanAssert.getActualValue;
 import static ru.qatools.beanloader.BeanAssert.setActualValue;
+import static ru.qatools.beanloader.TestListener.beCalledWith;
 import static ru.yandex.qatools.matchers.decorators.MatcherDecorators.should;
 import static ru.yandex.qatools.matchers.decorators.MatcherDecorators.timeoutHasExpired;
 
@@ -25,35 +25,46 @@ import static ru.yandex.qatools.matchers.decorators.MatcherDecorators.timeoutHas
  */
 public class FileWatcherTest extends BeanChangingTest {
 
-    @Test
-    public void testFileWatcher() throws Exception {
-        final AtomicBoolean unmarshalInvoked = new AtomicBoolean(false);
-        FileWatcher watcher = new FileWatcher(RESOURCES_DIR, BEAN_XML_NAME, new FileChangeListener() {
-            @Override
-            public void fileChanged(Path path) {
-                unmarshalInvoked.getAndSet(true);
-            }
-        });
-        Executors.newSingleThreadExecutor().submit(watcher);
+    private TestFileChangeListener listener;
 
+    private ExecutorService executor;
+
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        listener = new TestFileChangeListener();
+        executor = newSingleThreadExecutor();
+        executor.submit(new FileWatcher(Paths.get(RESOURCES_DIR), "glob:*.xml", listener));
         Thread.sleep(1000);
-        assertFalse(unmarshalInvoked.get());
+    }
+
+    @Test
+    public void testListenerIsNotCalledImmediately() {
+        assertTrue(listener.isNotCalled());
+    }
+
+    @Test
+    public void testListenerInvocationOnFileUpdate() throws Exception {
         setActualValue("another " + getActualValue());
-        assertThat(unmarshalInvoked, should(beTrue())
+        assertThat(listener, should(beCalledWith(BEAN_XML_NAME))
                 .whileWaitingUntil(timeoutHasExpired(60000)));
     }
 
-    private static Matcher<AtomicBoolean> beTrue() {
-        return new TypeSafeMatcher<AtomicBoolean>() {
-            @Override
-            protected boolean matchesSafely(AtomicBoolean item) {
-                return item.get();
-            }
+    @Test
+    public void testListenerInvocationOnNewFileCreation() throws Exception {
+        String newXmlFileName = "another-bean.xml";
+        File newFile = new File(RESOURCES_DIR + newXmlFileName);
+        newFile.deleteOnExit();
+        setActualValue("some new value", newFile);
+        assertThat(listener, should(beCalledWith(newXmlFileName))
+                .whileWaitingUntil(timeoutHasExpired(60000)));
+    }
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("<true>");
-            }
-        };
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        executor.shutdownNow();
     }
 }
