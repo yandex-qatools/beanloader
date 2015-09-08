@@ -62,6 +62,9 @@ Bean bean = (Bean) JAXB.unmarshal(this.getClass().getClassLoader().getResource("
 is equivalent to:
 
 ```java
+import static ru.qatools.beanloader.BeanLoader.load;
+import static ru.qatools.beanloader.BeanLoaderStrategies.resource;
+
 Bean bean = load(Bean.class).from(resource("bean.xml")).getBean();
 ```
 
@@ -85,6 +88,9 @@ but it may not be convenient for multiple reasons.
 With BeanLoader you can organize your code as follows:
 
 ```java
+import static ru.qatools.beanloader.BeanLoader.load;
+import static ru.qatools.beanloader.BeanLoaderStrategies.*;
+
 public class MyClass {
 
     private final BeanLoader<Bean> beanLoader;
@@ -112,11 +118,14 @@ only when it gets changed externally. Instead of implementing your own thread
 with ```while(true)``` loop you can just do it in a couple of lines:
 
 ```java
+import static ru.qatools.beanloader.BeanLoader.load;
+import static ru.qatools.beanloader.BeanLoaderStrategies.*;
+
 public class MyClass {
 
     private final BeanLoader<Bean> beanLoader;
 
-    public MyClass(String filename, String directory) {
+    public MyClass(String directory, String filename) {
         this.beanLoader = load(Bean.class).from(fileWithWatcher(directory, filename));
     }
 
@@ -138,11 +147,14 @@ For example, log it's contents or fire some message. This can be achieved
 with the help of ```BeanChangeListener``` interface. See the following code:
 
 ```java
+import static ru.qatools.beanloader.BeanLoader.load;
+import static ru.qatools.beanloader.BeanLoaderStrategies.*;
+
 public class MyClass implements BeanChangeListener<Bean> {
 
     private final BeanLoader<Bean> beanLoader;
 
-    public MyClass(String filename, String directory) {
+    public MyClass(String directory, String filename) {
         this.beanLoader = load(Bean.class).from(fileWithWatcher(directory, filename, this));
     }
 
@@ -161,3 +173,31 @@ public class MyClass implements BeanChangeListener<Bean> {
 Notice that if you lose a link to the beanLoader instance — the watcher thread may get stopped
 somewhere in the future when the garbage collection happens. That's a subject of discussion though
 maybe one can think of some better behaviour for when to stop the thread.
+
+#### 5) Using a file watcher without BeanLoader
+
+Imagine you do not need any beanLoader, all you want to do — is to be notified on every bean change. 
+Due to the reasons described above there is some one more class to fill the functionality gap.
+Of course you can just take the example above, delete the ```doSomeStuff()``` method and 
+yeah, it will work. Although you'll need to preserve the field which will be marked as unused by
+any IDE. That may cause problems when another developer will delete the field by mistake and
+then get severely surprised when the file watching thread stops. There is a special parameter 
+for this case though: you can pass ```true``` as a forth parameter to ```fileWithWatcher()``` method
+and this way you'll prevent the watcher thread from stopping when the ```beanLoader``` instance
+get garbage collected. Anyway, using this parameter is equivalent to the code snippet below:
+
+```java
+import static ru.qatools.beanloader.BeanWatcher.watchFor;
+
+public class MyClass implements BeanChangeListener<Bean> {
+
+    public MyClass(String directory, String filename) {
+        watchFor(Bean.class, directory, filename, this);
+    }
+
+    @Override
+    public void beanChanged(Bean newBean) {
+        System.out.println("Wow, new bean is here! Take a look: " + stringify(newBean));
+    }
+}
+```
