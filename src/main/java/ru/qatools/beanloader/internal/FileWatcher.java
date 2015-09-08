@@ -12,6 +12,8 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 /**
@@ -36,7 +38,7 @@ public class FileWatcher implements Runnable {
     public void run() {
         FileSystem fileSystem = FileSystems.getDefault();
         try (WatchService service = fileSystem.newWatchService()) {
-            directoryPath.register(service, ENTRY_MODIFY);
+            directoryPath.register(service, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
             watch(service, fileSystem.getPathMatcher(pathMatcherPattern));
         } catch (IOException e) {
             logger.error("Can't create watch service for directory {}", directoryPath, e);
