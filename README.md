@@ -206,6 +206,10 @@ Note that when you call the ```watchFor``` method  your listener will be invoked
 for the current version of the file. Because noone needs to be notified of changed without
 reading the initial content first.
 
+Also note that if the file content at some point will not match the bean class provided -
+then the listener will be invoked with ```null``` as the second argument. The same behavior
+is expected when the watched file is deleted.
+
 #### 6) Watching over multiple files
 
 The same way you can also watch over multiple files, specifying them all by pattern:
