@@ -52,11 +52,15 @@ public class FileWatcherTest extends BeanChangingTest {
     }
 
     @Test
-    public void testListenerInvocationOnNewFileCreation() throws Exception {
+    public void testListenerInvocationOnNewFileCreationAndDeletion() throws Exception {
         String newXmlFileName = "another-bean.xml";
         File newFile = new File(RESOURCES_DIR + newXmlFileName);
         newFile.deleteOnExit();
-        setActualValue("some new value", newFile);
+        assertTrue(newFile.createNewFile());
+        assertThat(listener, should(beCalledWith(newFile.getPath()))
+                .whileWaitingUntil(timeoutHasExpired(60000)));
+        listener.reset();
+        assertTrue(newFile.delete());
         assertThat(listener, should(beCalledWith(newFile.getPath()))
                 .whileWaitingUntil(timeoutHasExpired(60000)));
     }
