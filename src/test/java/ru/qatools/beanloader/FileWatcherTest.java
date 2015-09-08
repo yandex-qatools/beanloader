@@ -47,7 +47,7 @@ public class FileWatcherTest extends BeanChangingTest {
     @Test
     public void testListenerInvocationOnFileUpdate() throws Exception {
         setActualValue("another " + getActualValue());
-        assertThat(listener, should(beCalledWith(BEAN_XML_NAME))
+        assertThat(listener, should(beCalledWith(RESOURCES_DIR + BEAN_XML_NAME))
                 .whileWaitingUntil(timeoutHasExpired(60000)));
     }
 
@@ -57,7 +57,7 @@ public class FileWatcherTest extends BeanChangingTest {
         File newFile = new File(RESOURCES_DIR + newXmlFileName);
         newFile.deleteOnExit();
         setActualValue("some new value", newFile);
-        assertThat(listener, should(beCalledWith(newXmlFileName))
+        assertThat(listener, should(beCalledWith(newFile.getPath()))
                 .whileWaitingUntil(timeoutHasExpired(60000)));
     }
 

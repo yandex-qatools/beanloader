@@ -60,7 +60,7 @@ public class FileWatcher implements Runnable {
             Path path = (Path) event.context();
             if (pathMatcher.matches(path)) {
                 logger.info("file " + path + " changed");
-                listener.fileChanged(path);
+                listener.fileChanged(directoryPath.resolve(path));
             }
         }
     }
