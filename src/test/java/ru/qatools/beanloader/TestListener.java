@@ -4,32 +4,39 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
  */
 public class TestListener {
 
-    private String newValue;
+    private List<String> values;
+
+    public TestListener() {
+        reset();
+    }
 
     public void reset() {
-        update(null);
+        values = new ArrayList<>();
     }
 
     public void update(String value) {
-        newValue = value;
+        values.add(value);
     }
 
     public boolean isCalledWith(String value) {
-        return value.equals(newValue);
+        return values.contains(value);
     }
 
     public boolean isNotCalled() {
-        return newValue == null;
+        return values.isEmpty();
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{newValue='" + newValue + "'}";
+        return getClass().getSimpleName() + "{values='" + values + "'}";
     }
 
     public static Matcher<TestListener> beCalledWith(final String value) {
