@@ -1,19 +1,16 @@
 package ru.qatools.beanloader;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import ru.qatools.beanloader.internal.BeanLoadStrategy;
 
 import java.io.File;
 
 import static javax.xml.bind.JAXB.marshal;
 import static javax.xml.bind.JAXB.unmarshal;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static ru.qatools.beanloader.BeanLoader.load;
-import static ru.yandex.qatools.matchers.decorators.MatcherDecorators.should;
-import static ru.yandex.qatools.matchers.decorators.MatcherDecorators.timeoutHasExpired;
 
 /**
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
@@ -66,30 +63,5 @@ public class BeanAssert {
 
     public void valueHasNotChanged() {
         valueIsEqualToActual();
-    }
-
-    public void waitUntilValueIsEqualTo(String value) {
-        assertThat(loader, should(haveBeanWith(value))
-                .whileWaitingUntil(timeoutHasExpired(60000)));
-    }
-
-    private Matcher<BeanLoader<Bean>> haveBeanWith(final String value) {
-        return new TypeSafeMatcher<BeanLoader<Bean>>() {
-
-            @Override
-            protected boolean matchesSafely(BeanLoader<Bean> item) {
-                return item.getBean().getValue().equals(value);
-            }
-
-            @Override
-            protected void describeMismatchSafely(BeanLoader<Bean> item, Description description) {
-                description.appendText("bean with value = " + item.getBean().getValue());
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("bean with value = " + value);
-            }
-        };
     }
 }
