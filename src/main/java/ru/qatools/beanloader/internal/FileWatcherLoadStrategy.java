@@ -14,29 +14,25 @@ import java.util.concurrent.Executors;
  */
 public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> implements FileChangeListener {
 
-    private final String directory;
-    private final String file;
+    private final Path directoryPath;
+    private final String fileName;
     private final BeanChangeListener<T> listener;
     private final boolean preventGC;
 
     private ExecutorService executor;
 
-    public FileWatcherLoadStrategy(String directory, String file) {
-        this(directory, file, new BeanChangeListener<T>() {
-            @Override
-            public void beanChanged(Path path, T newBean) {
-            }
-        });
+    public FileWatcherLoadStrategy(String directory, String fileName) {
+        this(directory, fileName, null);
     }
 
-    public FileWatcherLoadStrategy(String directory, String file, BeanChangeListener<T> listener) {
-        this(directory, file, listener, false);
+    public FileWatcherLoadStrategy(String directory, String fileName, BeanChangeListener<T> listener) {
+        this(directory, fileName, listener, false);
     }
 
-    public FileWatcherLoadStrategy(String directory, String file, BeanChangeListener<T> listener, boolean preventGC) {
-        super(new File(directory, file), false);
-        this.directory = directory;
-        this.file = file;
+    public FileWatcherLoadStrategy(String directory, String fileName, BeanChangeListener<T> listener, boolean preventGC) {
+        super(new File(directory, fileName), false);
+        this.directoryPath = Paths.get(directory);
+        this.fileName = fileName;
         this.listener = listener;
         this.preventGC = preventGC;
     }
@@ -44,20 +40,23 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> implements F
     @Override
     public void init(Class<T> beanClass) {
         super.init(beanClass);
-        fileChanged(Paths.get(directory, file));
+        fileChanged(directoryPath.resolve(fileName));
         startFileWatcherThread();
     }
 
     private void startFileWatcherThread() {
+        FileChangeListener listener = preventGC ? this : new WeakFileChangeListener(this);
         executor = Executors.newSingleThreadExecutor();
-        executor.execute(new FileWatcher(directory, file, preventGC ? this : new WeakFileChangeListener(this)));
+        executor.execute(new FileWatcher(directoryPath, "glob:" + fileName, listener));
         executor.shutdown();
     }
 
     @Override
     public void fileChanged(Path path) {
         loadBean();
-        listener.beanChanged(path, getBean());
+        if (listener != null) {
+            listener.beanChanged(path, getBean());
+        }
     }
 
     @Override

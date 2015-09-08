@@ -8,7 +8,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
@@ -26,10 +25,6 @@ public class FileWatcher implements Runnable {
     private final Path directoryPath;
     private final String pathMatcherPattern;
     private final FileChangeListener listener;
-
-    public FileWatcher(String directory, String file, FileChangeListener listener) {
-        this(Paths.get(directory), "glob:" + file, listener);
-    }
 
     public FileWatcher(Path directoryPath, String pathMatcherPattern, FileChangeListener listener) {
         this.directoryPath = directoryPath;
