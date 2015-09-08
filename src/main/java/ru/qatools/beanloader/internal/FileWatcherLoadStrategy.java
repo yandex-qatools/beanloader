@@ -3,13 +3,16 @@ package ru.qatools.beanloader.internal;
 import ru.qatools.beanloader.BeanChangeListener;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
  */
-public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
+public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> implements FileChangeListener {
 
     private final String directory;
     private final String file;
@@ -21,7 +24,7 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
     public FileWatcherLoadStrategy(String directory, String file) {
         this(directory, file, new BeanChangeListener<T>() {
             @Override
-            public void beanChanged(T newBean) {
+            public void beanChanged(Path path, T newBean) {
             }
         });
     }
@@ -41,21 +44,20 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
     @Override
     public void init(Class<T> beanClass) {
         super.init(beanClass);
-        loadBean();
+        fileChanged(Paths.get(directory, file));
         startFileWatcherThread();
     }
 
     private void startFileWatcherThread() {
         executor = Executors.newSingleThreadExecutor();
-        executor.execute(new FileWatcher(directory, file, preventGC ? new StrongFileChangeListener(this)
-                                                                    : new WeakFileChangeListener(this)));
+        executor.execute(new FileWatcher(directory, file, preventGC ? this : new WeakFileChangeListener(this)));
         executor.shutdown();
     }
 
     @Override
-    protected synchronized void loadBean() {
-        super.loadBean();
-        listener.beanChanged(getBean());
+    public void fileChanged(Path path) {
+        loadBean();
+        listener.beanChanged(path, getBean());
     }
 
     @Override
@@ -64,6 +66,24 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
         if (!preventGC && executor != null) {
             logger.debug("Strategy object is garbage-collected, stopping watcher thread");
             executor.shutdownNow();
+        }
+    }
+
+    //static is crucial here: otherwise the back reference still exists!
+    private static class WeakFileChangeListener implements FileChangeListener {
+
+        private final WeakReference<FileChangeListener> listenerReference;
+
+        public WeakFileChangeListener(FileChangeListener listener) {
+            this.listenerReference = new WeakReference<>(listener);
+        }
+
+        @Override
+        public void fileChanged(Path path) {
+            FileChangeListener strategy = listenerReference.get();
+            if (strategy != null) {
+                strategy.fileChanged(path);
+            }
         }
     }
 }

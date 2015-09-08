@@ -28,7 +28,7 @@ public abstract class BeanLoadStrategy<T> {
         return bean;
     }
 
-    protected void loadBean() {
+    protected final void loadBean() {
         if (beanClass == null) {
             throw new UnsupportedOperationException("Unable to load bean: call init(beanClass) first!");
         }

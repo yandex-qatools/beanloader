@@ -164,7 +164,7 @@ public class MyClass implements BeanChangeListener<Bean> {
     }
 
     @Override
-    public void beanChanged(Bean newBean) {
+    public void beanChanged(Path path, Bean newBean) {
         System.out.println("Wow, new bean is here! Take a look: " + stringify(newBean));
     }
 }
@@ -196,7 +196,7 @@ public class MyClass implements BeanChangeListener<Bean> {
     }
 
     @Override
-    public void beanChanged(Bean newBean) {
+    public void beanChanged(Path path, Bean newBean) {
         System.out.println("Wow, new bean is here! Take a look: " + stringify(newBean));
     }
 }

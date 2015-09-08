@@ -4,6 +4,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.nio.file.Path;
+
 public class TestBeanChangeListener implements BeanChangeListener<Bean> {
 
     private String newValue;
@@ -21,7 +23,7 @@ public class TestBeanChangeListener implements BeanChangeListener<Bean> {
     }
 
     @Override
-    public void beanChanged(Bean newBean) {
+    public void beanChanged(Path path, Bean newBean) {
         newValue = newBean.getValue();
     }
 
