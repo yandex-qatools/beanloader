@@ -164,7 +164,7 @@ public class MyClass implements BeanChangeListener<Bean> {
     }
 
     @Override
-    public void beanChanged(Bean newBean) {
+    public void beanChanged(Path path, Bean newBean) {
         System.out.println("Wow, new bean is here! Take a look: " + stringify(newBean));
     }
 }
@@ -196,8 +196,38 @@ public class MyClass implements BeanChangeListener<Bean> {
     }
 
     @Override
-    public void beanChanged(Bean newBean) {
+    public void beanChanged(Path path, Bean newBean) {
         System.out.println("Wow, new bean is here! Take a look: " + stringify(newBean));
     }
 }
 ```
+
+Note that when you call the ```watchFor``` method  your listener will be invoked immediately
+for the current version of the file. Because noone needs to be notified of changed without
+reading the initial content first.
+
+#### 6) Watching over multiple files
+
+The same way you can also watch over multiple files, specifying them all by pattern:
+
+```java
+import static ru.qatools.beanloader.BeanWatcher.watchFor;
+
+public class MyClass implements BeanChangeListener<Bean> {
+
+    public MyClass(String directory) {
+        watchFor(Bean.class, directory, "*-config.xml", this);
+    }
+
+    @Override
+    public void beanChanged(Path path, Bean newBean) {
+        System.out.println("Wow, new bean is here! Take a look: " + stringify(newBean));
+    }
+}
+```
+
+Pattern should match the rules described in the ```java.nio.file.FileSystem.getPathMatcher()``` 
+[method javadoc][1] for the ```glob``` syntax. And yeah, again: the listener will be immediately 
+invoked for all the the files that match that glob.
+
+[1]: http://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystem.html#getPathMatcher%28java.lang.String%29
