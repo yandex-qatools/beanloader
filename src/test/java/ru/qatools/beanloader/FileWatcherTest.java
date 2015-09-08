@@ -4,8 +4,10 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
+import ru.qatools.beanloader.internal.FileChangeListener;
 import ru.qatools.beanloader.internal.FileWatcher;
 
+import java.nio.file.Path;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -26,11 +28,12 @@ public class FileWatcherTest extends BeanChangingTest {
     @Test
     public void testFileWatcher() throws Exception {
         final AtomicBoolean unmarshalInvoked = new AtomicBoolean(false);
-        FileWatcher watcher = new FileWatcher(RESOURCES_DIR, BEAN_XML_NAME) {
-            protected void fileChanged() {
+        FileWatcher watcher = new FileWatcher(RESOURCES_DIR, BEAN_XML_NAME, new FileChangeListener() {
+            @Override
+            public void fileChanged(Path path) {
                 unmarshalInvoked.getAndSet(true);
             }
-        };
+        });
         Executors.newSingleThreadExecutor().submit(watcher);
 
         Thread.sleep(1000);

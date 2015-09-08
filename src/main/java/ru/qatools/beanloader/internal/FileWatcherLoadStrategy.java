@@ -47,8 +47,8 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> {
 
     private void startFileWatcherThread() {
         executor = Executors.newSingleThreadExecutor();
-        executor.execute(preventGC ? new ImmortalFileWatcher(this, directory, file)
-                                   : new WeakFileWatcher    (this, directory, file));
+        executor.execute(new FileWatcher(directory, file, preventGC ? new StrongFileChangeListener(this)
+                                                                    : new WeakFileChangeListener(this)));
         executor.shutdown();
     }
 

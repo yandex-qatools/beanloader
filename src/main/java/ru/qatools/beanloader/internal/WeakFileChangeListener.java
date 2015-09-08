@@ -1,21 +1,21 @@
 package ru.qatools.beanloader.internal;
 
 import java.lang.ref.WeakReference;
+import java.nio.file.Path;
 
 /**
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
  */
-public class WeakFileWatcher extends FileWatcher {
+public class WeakFileChangeListener implements FileChangeListener {
 
     private final WeakReference<BeanLoadStrategy> loadStrategyReference;
 
-    public WeakFileWatcher(BeanLoadStrategy loadStrategy, String directory, String file) {
-        super(directory, file);
+    public WeakFileChangeListener(BeanLoadStrategy loadStrategy) {
         this.loadStrategyReference = new WeakReference<>(loadStrategy);
     }
 
     @Override
-    protected void fileChanged() {
+    public void fileChanged(Path path) {
         BeanLoadStrategy strategy = loadStrategyReference.get();
         if (strategy != null) {
             strategy.loadBean();

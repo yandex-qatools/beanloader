@@ -1,19 +1,20 @@
 package ru.qatools.beanloader.internal;
 
+import java.nio.file.Path;
+
 /**
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
  */
-public class ImmortalFileWatcher extends FileWatcher {
+public class StrongFileChangeListener implements FileChangeListener {
 
     private final BeanLoadStrategy loadStrategy;
 
-    public ImmortalFileWatcher(BeanLoadStrategy loadStrategy, String directory, String file) {
-        super(directory, file);
+    public StrongFileChangeListener(BeanLoadStrategy loadStrategy) {
         this.loadStrategy = loadStrategy;
     }
 
     @Override
-    protected void fileChanged() {
+    public void fileChanged(Path path) {
         loadStrategy.loadBean();
     }
 }
