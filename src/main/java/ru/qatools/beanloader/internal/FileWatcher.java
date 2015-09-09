@@ -22,7 +22,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
  */
 public class FileWatcher implements Runnable {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileWatcher.class);
 
     private final Path directoryPath;
     private final String pathMatcherPattern;
@@ -41,14 +41,14 @@ public class FileWatcher implements Runnable {
             directoryPath.register(service, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
             watch(service, fileSystem.getPathMatcher(pathMatcherPattern));
         } catch (IOException e) {
-            logger.error("Can't create watch service for directory {}", directoryPath, e);
+            LOGGER.error("Can't create watch service for directory {}", directoryPath, e);
         } catch (InterruptedException e) {
-            logger.warn("oops, thread was interrupted");
+            LOGGER.warn("oops, thread was interrupted");
         }
     }
 
     private void watch(WatchService service, PathMatcher pathMatcher) throws InterruptedException {
-        logger.info("Watching for changes in directory {}", directoryPath);
+        LOGGER.info("Watching for changes in directory {}", directoryPath);
         //noinspection InfiniteLoopStatement
         while (true) {
             WatchKey key = service.take();
@@ -62,7 +62,7 @@ public class FileWatcher implements Runnable {
             Path fileRelativePath = (Path) event.context();
             if (pathMatcher.matches(fileRelativePath)) {
                 Path fileResolvedPath = directoryPath.resolve(fileRelativePath);
-                logger.info("file " + fileResolvedPath + " changed");
+                LOGGER.info("file {} changed", fileResolvedPath);
                 listener.fileChanged(fileResolvedPath);
             }
         }

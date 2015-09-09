@@ -17,18 +17,19 @@ public class UrlLoadStrategy<T> extends BeanLoadStrategy<T> {
         this.reload = reload;
     }
 
+    @Override
     protected boolean canUnmarshal() {
         return url != null;
     }
 
+    @Override
     protected boolean reloadEveryTime() {
         return reload;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected T performUnmarshal(Class beanClass) {
-        return (T) JAXB.unmarshal(url, beanClass);
+    protected T performUnmarshal(Class<T> beanClass) {
+        return JAXB.unmarshal(url, beanClass);
     }
 
     @Override

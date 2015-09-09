@@ -22,14 +22,14 @@ public class FileLoadStrategy<T> extends BeanLoadStrategy<T> {
         return file.exists();
     }
 
+    @Override
     protected boolean reloadEveryTime() {
         return reload;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected T performUnmarshal(Class beanClass) {
-        return (T) JAXB.unmarshal(file, beanClass);
+    protected T performUnmarshal(Class<T> beanClass) {
+        return JAXB.unmarshal(file, beanClass);
     }
 
     @Override
