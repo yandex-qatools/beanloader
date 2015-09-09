@@ -22,23 +22,22 @@ public class FileWatcherLoadStrategyTest extends BeanChangingTest {
 
     private TestBeanChangeListener listener;
 
-    private BeanLoader<Bean> beanLoader;
-
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         listener = new TestBeanChangeListener();
-        beanLoader = load(Bean.class).from(fileWithWatcher(RESOURCES_DIR, BEAN_XML_NAME, listener));
     }
 
     @Test
     public void testListenerIsCalledImmediately() throws Exception {
+        load(Bean.class).from(fileWithWatcher(RESOURCES_DIR, BEAN_XML_NAME, listener));
         assertTrue(listener.isCalledWith(getActualValue()));
     }
 
     @Test
     public void testListenerIsNotCalledOnBeanGetter() {
+        BeanLoader<Bean> beanLoader = load(Bean.class).from(fileWithWatcher(RESOURCES_DIR, BEAN_XML_NAME, listener));
         listener.reset();
         beanLoader.getBean();
         assertTrue(listener.isNotCalled());
@@ -46,6 +45,9 @@ public class FileWatcherLoadStrategyTest extends BeanChangingTest {
 
     @Test
     public void testListenerInvocation() throws Exception {
+        //noinspection unused
+        BeanLoader<Bean> beanLoader = load(Bean.class).from(fileWithWatcher(RESOURCES_DIR, BEAN_XML_NAME, listener));
+
         // I have no idea how this affects the test's result,
         // but without this line it's quite unstable on my machine.
         // Seems like we should wait after initializing WatchService,
@@ -61,13 +63,25 @@ public class FileWatcherLoadStrategyTest extends BeanChangingTest {
 
     @Test
     public void testWatcherIsStoppedOnGarbageCollection() throws Exception {
-        Thread.sleep(1000);
+        load(Bean.class).from(fileWithWatcher(RESOURCES_DIR, BEAN_XML_NAME, listener));
         listener.reset();
-        beanLoader = null;
         System.gc();
+        Thread.sleep(1000);
         String newValue = "another " + getActualValue();
         setActualValue(newValue);
         Thread.sleep(15000);
         assertTrue(listener.isNotCalled());
+    }
+
+    @Test
+    public void testPreventGC() throws Exception {
+        load(Bean.class).from(fileWithWatcher(RESOURCES_DIR, BEAN_XML_NAME, listener, true));
+        listener.reset();
+        System.gc();
+        Thread.sleep(1000);
+        String newValue = "one more another " + getActualValue();
+        setActualValue(newValue);
+        assertThat(listener, should(beCalledWith(newValue))
+                .whileWaitingUntil(timeoutHasExpired(60000)));
     }
 }

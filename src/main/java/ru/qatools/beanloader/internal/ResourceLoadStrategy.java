@@ -14,6 +14,6 @@ public class ResourceLoadStrategy extends UrlLoadStrategy {
 
     @Override
     protected String getSourceDescription() {
-        return "resource '" + resource + "'";
+        return "classpath resource " + resource;
     }
 }
