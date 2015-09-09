@@ -34,7 +34,7 @@ public abstract class BeanLoadStrategy<T> {
         }
 
         loaded = true;
-        logger.trace("trying to load bean from " + getSourceDescription());
+        logger.trace("trying to load bean from {}", getSourceDescription());
         if (!canUnmarshal()) {
             logger.trace("source does not exist, aborting");
             return;
@@ -51,10 +51,9 @@ public abstract class BeanLoadStrategy<T> {
 
     private void logUnmarshallingException(Exception e, String sourceDescription) {
         if (logger.isDebugEnabled()) {
-            logger.error("exception caught while unmarshalling from " + sourceDescription, e);
+            logger.error("exception caught while unmarshalling from {}", sourceDescription, e);
         } else {
-            logger.error(String.format("exception caught while unmarshalling from %s: %s",
-                    sourceDescription, e.getMessage()));
+            logger.error("exception caught while unmarshalling from {}: {}", sourceDescription, e.getMessage());
         }
     }
 

@@ -62,7 +62,7 @@ public class FileWatcherLoadStrategy<T> extends FileLoadStrategy<T> implements F
     @Override
     protected void finalize() throws Throwable {
         if (!preventGC && executor != null) {
-            logger.debug("Strategy object is garbage-collected, stopping watcher thread");
+            logger.debug("strategy object is garbage-collected, stopping watcher thread");
             executor.shutdownNow();
         }
         super.finalize();
