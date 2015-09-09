@@ -17,10 +17,12 @@ public class UrlLoadStrategy<T> extends BeanLoadStrategy<T> {
         this.reload = reload;
     }
 
+    @Override
     protected boolean canUnmarshal() {
         return url != null;
     }
 
+    @Override
     protected boolean reloadEveryTime() {
         return reload;
     }

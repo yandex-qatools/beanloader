@@ -22,6 +22,7 @@ public class FileLoadStrategy<T> extends BeanLoadStrategy<T> {
         return file.exists();
     }
 
+    @Override
     protected boolean reloadEveryTime() {
         return reload;
     }
