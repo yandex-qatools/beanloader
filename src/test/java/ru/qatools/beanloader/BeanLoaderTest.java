@@ -4,9 +4,14 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static ru.qatools.beanloader.BeanAssert.*;
+import static ru.qatools.beanloader.BeanAssert.BEAN_XML_NAME;
+import static ru.qatools.beanloader.BeanAssert.BEAN_XML_PATH;
+import static ru.qatools.beanloader.BeanAssert.RESOURCES_DIR;
+import static ru.qatools.beanloader.BeanAssert.setActualValue;
 import static ru.qatools.beanloader.BeanLoader.load;
-import static ru.qatools.beanloader.BeanLoaderStrategies.*;
+import static ru.qatools.beanloader.BeanLoaderStrategies.file;
+import static ru.qatools.beanloader.BeanLoaderStrategies.resource;
+import static ru.qatools.beanloader.BeanLoaderStrategies.url;
 
 /**
  * @author Innokenty Shuvalov innokenty@yandex-team.ru
@@ -57,5 +62,13 @@ public class BeanLoaderTest {
 
         assertBean.valueIsEqualTo(anotherValue);
         assertBean.valueIsEqualTo(anotherValue);
+    }
+
+    /**
+     * To check that {@link NullPointerException} is not thrown
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testNullBeanClass() {
+        load(null).from(resource(BEAN_XML_PATH)).getBean();
     }
 }
