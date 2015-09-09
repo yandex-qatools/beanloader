@@ -10,7 +10,7 @@ import javax.xml.bind.DataBindingException;
  */
 public abstract class BeanLoadStrategy<T> {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass()); //NOSONAR
 
     private T bean;
     private Class<T> beanClass;
