@@ -191,7 +191,7 @@ import static ru.qatools.beanloader.BeanWatcher.watchFor;
 
 public class MyClass implements BeanChangeListener<Bean> {
 
-    public MyClass(String directory, String filename) {
+    public MyClass(String directory, String filename) throws IOException {
         watchFor(Bean.class, directory, filename, this);
     }
 
@@ -219,7 +219,7 @@ import static ru.qatools.beanloader.BeanWatcher.watchFor;
 
 public class MyClass implements BeanChangeListener<Bean> {
 
-    public MyClass(String directory) {
+    public MyClass(String directory) throws IOException {
         watchFor(Bean.class, directory, "*-config.xml", this);
     }
 
