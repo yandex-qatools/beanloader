@@ -1,7 +1,7 @@
 # BeanLoader
 
 [![release](http://github-release-version.herokuapp.com/github/yandex-qatools/beanloader/release.svg?style=flat)](https://github.com/yandex-qatools/beanloader/releases/latest) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ru.yandex.qatools.beanloader/beanloader/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.yandex.qatools.beanloader/beanloader)
-[![covarage](https://img.shields.io/sonar/http/sonar.qatools.ru/ru.yandex.qatools.beanloader:beanloader/coverage.svg?style=flat)](http://sonar.qatools.ru/dashboard/index/547)
+[![covarage](https://img.shields.io/sonar/http/sonar.qatools.ru/ru.yandex.qatools.beanloader:beanloader/coverage.svg?style=flat)](http://sonar.qatools.ru/dashboard/index/1203)
 
 This small library with no dependencies provides an easy fluent API to load xml beans
 from different sources via JAXB, giving some of them higher priority
