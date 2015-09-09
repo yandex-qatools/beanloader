@@ -59,10 +59,11 @@ public class FileWatcher implements Runnable {
 
     private void handleKey(WatchKey key, PathMatcher pathMatcher) {
         for (WatchEvent event : key.pollEvents()) {
-            Path path = (Path) event.context();
-            if (pathMatcher.matches(path)) {
-                logger.info("file " + path + " changed");
-                listener.fileChanged(directoryPath.resolve(path));
+            Path fileRelativePath = (Path) event.context();
+            if (pathMatcher.matches(fileRelativePath)) {
+                Path fileResolvedPath = directoryPath.resolve(fileRelativePath);
+                logger.info("file " + fileResolvedPath + " changed");
+                listener.fileChanged(fileResolvedPath);
             }
         }
     }
