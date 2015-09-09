@@ -28,9 +28,8 @@ public class UrlLoadStrategy<T> extends BeanLoadStrategy<T> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected T performUnmarshal(Class beanClass) {
-        return (T) JAXB.unmarshal(url, beanClass);
+    protected T performUnmarshal(Class<T> beanClass) {
+        return JAXB.unmarshal(url, beanClass);
     }
 
     @Override

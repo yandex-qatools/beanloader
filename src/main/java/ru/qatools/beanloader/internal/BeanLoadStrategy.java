@@ -60,6 +60,6 @@ public abstract class BeanLoadStrategy<T> {
 
     protected abstract boolean canUnmarshal();
     protected abstract boolean reloadEveryTime();
-    protected abstract T performUnmarshal(Class beanClass);
+    protected abstract T performUnmarshal(Class<T> beanClass);
     protected abstract String getSourceDescription();
 }
