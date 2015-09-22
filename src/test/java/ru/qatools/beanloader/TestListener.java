@@ -4,6 +4,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +28,15 @@ public class TestListener {
         values.add(value);
     }
 
-    public boolean isCalledWith(String value) {
-        return values.contains(value);
+    public boolean isCalledWith(final String value) {
+        final Path valuePath = Paths.get(value);
+        for (final String val : values) {
+            final Path valPath = Paths.get(val);
+            if (valPath.equals(valuePath)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isNotCalled() {
