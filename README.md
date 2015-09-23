@@ -23,7 +23,7 @@ Of course, you can just write a ```fetchAndGetMyBean()``` and call it over and o
 <dependency>
     <groupId>ru.yandex.qatools.beanloader</groupId>
     <artifactId>beanloader</artifactId>
-    <version>1.0</version>
+    <version>2.0</version>
 </dependency>
 ```
 
