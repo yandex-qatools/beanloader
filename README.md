@@ -203,7 +203,7 @@ public class MyClass implements BeanChangeListener<Bean> {
 ```
 
 Note that when you call the ```watchFor``` method  your listener will be invoked immediately
-for the current version of the file. Because noone needs to be notified of changed without
+for the current version of the file. Because no one needs to be notified of changed without
 reading the initial content first.
 
 Also note that if the file content at some point will not match the bean class provided -
