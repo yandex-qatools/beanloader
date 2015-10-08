@@ -234,4 +234,18 @@ Pattern should match the rules described in the ```java.nio.file.FileSystem.getP
 [method javadoc][1] for the ```glob``` syntax. And yeah, again: the listener will be immediately 
 invoked for all the the files that match that glob.
 
+#### 7) Loading multiple beans once
+
+...or if you don't wanna watch for changes but just load all the beans in a directory once —
+you can just go:
+
+```java
+BeanLoader.loadAll(Bean.class, directory, "*-config.xml", new BeanChangeListener<Bean>() {
+    @Override
+    public void beanChanged(Path path, Bean newBean) {
+        System.out.println("Bean " + path + " loaded: " + stringify(newBean));
+    }
+});
+```
+
 [1]: http://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystem.html#getPathMatcher%28java.lang.String%29
