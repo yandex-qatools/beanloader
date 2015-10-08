@@ -16,6 +16,8 @@ Or another file etc.
 2. You need to reload the bean multiple times from the same resource. 
 Of course, you can just write a ```fetchAndGetMyBean()``` and call it over and over again, but why?
 3. You want to use a ```java.nio.file.WatchService``` to load the bean every time it is changed externally.
+4. You want to load multiple xml files of the same bean class from a directory by pattern,
+   but you don't wanna fetch the list of files and iterate yourself.
 
 ### Maven
 
@@ -27,30 +29,7 @@ Of course, you can just write a ```fetchAndGetMyBean()``` and call it over and o
 </dependency>
 ```
 
-### Usage
-
-```java
-import static ru.qatools.beanloader.BeanLoaderStrategies.*;
-import static ru.qatools.beanloader.BeanLoader.*;
-
-BeanLoader<Bean> beanLoader = load(Bean.class)
-        .from(resource("bean.xml"))
-        .from(url("http://example.com?get-my-bean-dawg"))
-        .from(file("~/beans/bean.xml"))
-        .from(fileWithWatcher("/etc/beans/", "bean.xml"));
-
-// load bean iterating over the given strategies
-// until one of the returns a non-null bean
-Bean bean = beanLoader.getBean();
-makeSomeStuff(bean);
-
-// reload the bean, if reloads are specified for any strategy
-// returns the same object if no reloads are specified
-bean = beanLoader.getBean();
-makeAnotherStuff(bean);
-```
-
-### Examples
+### Functions and Usage
 
 #### 1) Basic unmarshalling
 This code
@@ -80,7 +59,33 @@ to this:
 Bean bean = load(Bean.class).from(file("/etc/bean.xml")).getBean();
 ```
 
-#### 2) Reloading a file every time
+#### 2) Loading a bean from a list of sources
+
+This is the main function of BeanLoader. As it is said above, the goal is to 
+simplify the choise of the source to load the xml bean from.
+
+```java
+import static ru.qatools.beanloader.BeanLoaderStrategies.*;
+import static ru.qatools.beanloader.BeanLoader.*;
+
+BeanLoader<Bean> beanLoader = load(Bean.class)
+        .from(resource("bean.xml"))
+        .from(url("http://example.com?get-my-bean-dawg"))
+        .from(file("~/beans/bean.xml"))
+        .from(fileWithWatcher("/etc/beans/", "bean.xml"));
+
+// load bean iterating over the given strategies
+// until one of the returns a non-null bean
+Bean bean = beanLoader.getBean();
+makeSomeStuff(bean);
+
+// reload the bean, if reloads are specified for any strategy
+// returns the same object if no reloads are specified
+bean = beanLoader.getBean();
+makeAnotherStuff(bean);
+```
+
+#### 3) Reloading a file every time
 
 Lets say you want to reload fresh data for your bean every time some your method is called. 
 Of course you could just insert the load-n-unmarshal code right into your method 
@@ -110,7 +115,7 @@ public class MyClass {
 The second boolean parameter here indicates that a file will be reloaded 
 on every call to ```beanLoader.getBean()``` method.
 
-#### 3) Using a file watcher
+#### 4) Using a file watcher
 
 Now suppose realoading a file every time doesn't suit your needs 
 and you want to use a ```java.nio.file.WatchService``` to change the loaded bean 
@@ -140,7 +145,7 @@ And that's it! The bean will be reloaded only when it is changed and you'll get
 the fresh version of your bean on every call to ```beanLoader.getBean()``` guaranteed.
  Although remember that not every platform supports watching files.
 
-#### 4) Using a file watcher with a listener
+#### 5) Using a file watcher with a listener
 
 Sometimes you need do something with the bean immediately when it changes. 
 For example, log it's contents or fire some message. This can be achieved 
@@ -174,7 +179,7 @@ Notice that if you lose a link to the beanLoader instance — the watcher thread
 somewhere in the future when the garbage collection happens. That's a subject of discussion though
 maybe one can think of some better behaviour for when to stop the thread.
 
-#### 5) Using a file watcher without BeanLoader
+#### 6) Using a file watcher without BeanLoader
 
 Imagine you do not need any beanLoader, all you want to do — is to be notified on every bean change. 
 Due to the reasons described above there is some one more class to fill the functionality gap.
@@ -210,7 +215,7 @@ Also note that if the file content at some point will not match the bean class p
 then the listener will be invoked with ```null``` as the second argument. The same behavior
 is expected when the watched file is deleted.
 
-#### 6) Watching over multiple files
+#### 7) Watching over multiple files
 
 The same way you can also watch over multiple files, specifying them all by pattern:
 
@@ -234,7 +239,7 @@ Pattern should match the rules described in the ```java.nio.file.FileSystem.getP
 [method javadoc][1] for the ```glob``` syntax. And yeah, again: the listener will be immediately 
 invoked for all the the files that match that glob.
 
-#### 7) Loading multiple beans once
+#### 8) Loading multiple beans once and at once
 
 ...or if you don't wanna watch for changes but just load all the beans in a directory once —
 you can just go:
