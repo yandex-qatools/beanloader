@@ -22,15 +22,19 @@ public class BeanWatcher {
 
     public static <T> void watchFor(final Class<T> beanClass, String directory, String globPattern,
                                     final BeanChangeListener<T> listener) throws IOException {
-        Path directoryPath = Paths.get(directory);
+        watchFor(beanClass, Paths.get(directory), globPattern, listener);
+    }
+
+    public static <T> void watchFor(final Class<T> beanClass, Path directory, String globPattern,
+                                    final BeanChangeListener<T> listener) throws IOException {
         FileChangeListener chainedListener = new FileChangeChainedListener<>(beanClass, listener);
 
-        for (Path filePath : newDirectoryStream(directoryPath, globPattern)) {
+        for (Path filePath : newDirectoryStream(directory, globPattern)) {
             chainedListener.fileChanged(filePath);
         }
 
         ExecutorService executor = newSingleThreadExecutor();
-        executor.execute(new FileWatcher(directoryPath, "glob:" + globPattern, chainedListener));
+        executor.execute(new FileWatcher(directory, "glob:" + globPattern, chainedListener));
         executor.shutdown();
     }
 }
